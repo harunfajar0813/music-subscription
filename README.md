@@ -1,5 +1,7 @@
 # Music Subscription Submission
 
+![meme-programmer](https://cupheadmemes.com/wp-content/uploads/2018/08/Best-Programming-Memes-80.jpg) 
+
 ### DON'T FORGET TO FOLLOW 7 DEADLY CONVENTION, MENTIONED IN THIS REPOSITORIES ON [CONVENTION](https://github.com/Aldiwildan77/music-subscription/CONVENTION.md)
 ### Any code that didn't follow the convention will automatically rejected
 
@@ -26,9 +28,9 @@ One day you are thinking of building a music subscription apps that can do non-c
 
 ## <b>Meet the actor</b>
 ```
-* Customer
-* Subscription 
-* Transaction
+1. Customer
+2. Subscription 
+3. Transaction
 ```
 
 ## <b>Some Spec</b>
@@ -51,7 +53,6 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
 ```
 
 ## <b>Entities</b>
-```
 * Customer: 
   * id
   * name
@@ -70,7 +71,6 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
   * customer_id
   * subscription_id
   * total
-```
 
 ## <b>API</b>
 ```
@@ -92,24 +92,24 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
     "total": ""
   }
 ```
-> You can add a new API for exploration but you `must` implement the API above
+> ### You can add a new API for exploration but you `must` implement the API above
 
 ## <b>TODO</b>
-* [] Setup your Environment of this project by your chosen language
-* [] Prepare the actors services (Controller, Model, Route)
-  * [] Customer
-    * [] Register
-    * [] Topup
-    * [] Debit
-  * [] Subscription
-    * [] Create Subscription
-    * [] Read Subscription
-    * [] Read Subscription By Id
-  * [] Transaction
-    * [] Create Transaction
-    * [] Read Transaction 
-    * [] Read Transaction By ID
-* [] Do Testing
+* [ ] Setup your Environment of this project by your chosen language
+* [ ] Prepare the actors services (Controller, Model, Route)
+  * [ ] Customer
+    * [ ] Register
+    * [ ] Topup
+    * [ ] Debit
+  * [ ] Subscription
+    * [ ] Create Subscription
+    * [ ] Read Subscription
+    * [ ] Read Subscription By Id
+  * [ ] Transaction
+    * [ ] Create Transaction
+    * [ ] Read Transaction 
+    * [ ] Read Transaction By ID
+* [ ] Do Testing
 
 ## <b>TASK</b>
 ```
