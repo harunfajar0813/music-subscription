@@ -2,7 +2,7 @@
 
 ![meme-programmer](https://cupheadmemes.com/wp-content/uploads/2018/08/Best-Programming-Memes-80.jpg) 
 
-### DON'T FORGET TO FOLLOW 7 DEADLY CONVENTION, MENTIONED IN THIS REPOSITORIES ON [CONVENTION](https://github.com/Aldiwildan77/music-subscription/CONVENTION.md)
+### DON'T FORGET TO FOLLOW 7 DEADLY CONVENTION, MENTIONED IN THIS REPOSITORIES ON [CONVENTION](https://github.com/Aldiwildan77/music-subscription/blob/master/CONVENTION.md)
 ### Any code that didn't follow the convention will automatically rejected
 
 ## <b>References</b> 
@@ -129,7 +129,7 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
 ```
 
 ## <b>HOW TO SUBMIT</b>
-Please follow the [CONTRIBUTING](https://github.com/Aldiwildan77/music-subscription/CONTRIBUTING.md)
+Please follow the [CONTRIBUTING](https://github.com/Aldiwildan77/music-subscription/blob/master/CONTRIBUTING.md)
 
 ## This is not the only way to join with us
 ## But this is the one and only way to instantly pass
