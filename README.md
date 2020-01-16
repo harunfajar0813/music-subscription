@@ -95,7 +95,7 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
 > ### You can add a new API for exploration but you `must` implement the API above
 
 ## <b>TODO</b>
-* [ ] Setup your Environment of this project by your chosen language
+* [x] Setup your Environment of this project by your chosen language
 * [ ] Prepare the actors services (Controller, Model, Route)
   * [ ] Customer
     * [ ] Register
