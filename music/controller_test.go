@@ -169,6 +169,24 @@ func TestGetNonExistentCustomer(t *testing.T) {
 	}
 }
 
+func TestGetCustomer(t *testing.T) {
+	clearCustomerTable()
+	addCustomer(1)
+	req, _ := http.NewRequest("GET", "/api/customer/1", nil)
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+}
+
+func addCustomer(count int) {
+	if count < 1 {
+		count = 1
+	}
+	for i := 0; i < count; i++ {
+		statement := fmt.Sprintf("INSERT INTO customer(name, email, phone, balance) VALUES('%s', '%s', '%s', %d)", generateFake.FirstName(), generateFake.Email(), generateFake.Phonenumber(), 0)
+		a.DB.Exec(statement)
+	}
+}
+
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
