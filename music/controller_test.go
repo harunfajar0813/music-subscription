@@ -1,6 +1,7 @@
 package music
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -53,6 +54,18 @@ func TestEmptySubscriptionTable(t *testing.T) {
 
 	if body := response.Body.String(); body != "[]" {
 		t.Errorf("Expected an empty array. Got %s", body)
+	}
+}
+
+func TestGetNonExistentSubscription(t *testing.T) {
+	clearSubscriptionTable()
+	req, _ := http.NewRequest("GET", "/api/subscription/45", nil)
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusNotFound, response.Code)
+	var m map[string]string
+	json.Unmarshal(response.Body.Bytes(), &m)
+	if m["error"] != "Subscription not found" {
+		t.Errorf("Expected the 'error' key of the response to be set to 'Subscription not found'. Got '%s'", m["error"])
 	}
 }
 
