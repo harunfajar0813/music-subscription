@@ -28,10 +28,12 @@ func TestMain(m *testing.M) {
 	a.Initialize("root", "", "bcc_music")
 
 	ensureSubscriptionTableExists()
+	ensureCustomerTableExists()
 
 	code := m.Run()
 
 	clearSubscriptionTable()
+	clearCustomerTable()
 
 	os.Exit(code)
 }
@@ -117,6 +119,40 @@ func addSubscription(count int) {
 	for i := 0; i < count; i++ {
 		statement := fmt.Sprintf("INSERT INTO subscription(name, price, duration) VALUES('%s', %d, %d)", generateFake.FirstName(), (i+1)*10, (i+1)*10)
 		a.DB.Exec(statement)
+	}
+}
+
+const createCustomerTable = `
+CREATE TABLE IF NOT EXISTS customer
+(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+	phone VARCHAR(50) NOT NULL,
+	balance INT NOT NULL
+)`
+
+func ensureCustomerTableExists() {
+	if _, err := a.DB.Exec(createCustomerTable); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func clearCustomerTable() {
+	a.DB.Exec("DELETE FROM customer")
+	a.DB.Exec("ALTER TABLE customer AUTO_INCREMENT = 1")
+}
+
+func TestEmptyCustomerTable(t *testing.T) {
+	clearCustomerTable()
+
+	req, _ := http.NewRequest("GET", "/api/customers", nil)
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	if body := response.Body.String(); body != "[]" {
+		t.Errorf("Expected an empty array. Got %s", body)
 	}
 }
 
