@@ -187,6 +187,36 @@ func addCustomer(count int) {
 	}
 }
 
+func TestRegisterCustomer(t *testing.T) {
+	clearCustomerTable()
+
+	payload := []byte(`{"name":"test customer","email":"testcustomer@gmail.com","phone":"0813"}`)
+
+	req, _ := http.NewRequest("POST", "/api/customer/register", bytes.NewBuffer(payload))
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusCreated, response.Code)
+
+	var m map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["name"] != "test customer" {
+		t.Errorf("Expected customer's name to be 'test customer'. Got '%v'", m["name"])
+	}
+
+	if m["email"] != "testcustomer@gmail.com" {
+		t.Errorf("Expected customer's email to be 'testcustomer@gmail.com'. Got '%v'", m["price"])
+	}
+
+	if m["phone"] != "0813" {
+		t.Errorf("Expected customer's phone to be '0813'. Got '%v'", m["duration"])
+	}
+
+	if m["customer_id"] != 1.0 {
+		t.Errorf("Expected customer's ID to be '1'. Got '%v'", m["id"])
+	}
+}
+
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
