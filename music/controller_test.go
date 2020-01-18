@@ -1,6 +1,7 @@
 package music
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -66,6 +67,36 @@ func TestGetNonExistentSubscription(t *testing.T) {
 	json.Unmarshal(response.Body.Bytes(), &m)
 	if m["error"] != "Subscription not found" {
 		t.Errorf("Expected the 'error' key of the response to be set to 'Subscription not found'. Got '%s'", m["error"])
+	}
+}
+
+func TestCreateSubscription(t *testing.T) {
+	clearSubscriptionTable()
+
+	payload := []byte(`{"name":"test subscription","price":30,"duration":10}`)
+
+	req, _ := http.NewRequest("POST", "/api/subscription", bytes.NewBuffer(payload))
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusCreated, response.Code)
+
+	var m map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["name"] != "test subscription" {
+		t.Errorf("Expected subscription's name to be 'test subscription'. Got '%v'", m["name"])
+	}
+
+	if m["price"] != 30.0 {
+		t.Errorf("Expected subscription's age to be '30'. Got '%v'", m["price"])
+	}
+
+	if m["duration"] != 10.0 {
+		t.Errorf("Expected subscription's duration to be '10'. Got '%v'", m["duration"])
+	}
+
+	if m["subscription_id"] != 1.0 {
+		t.Errorf("Expected subscription ID to be '1'. Got '%v'", m["id"])
 	}
 }
 
