@@ -38,6 +38,8 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/subscriptions", a.getSubscriptions).Methods("GET")
 	a.Router.HandleFunc("/api/subscription/{id:[0-9]+}", a.getSubscriptionByID).Methods("GET")
 	a.Router.HandleFunc("/api/subscription", a.createSubscription).Methods("POST")
+
+	a.Router.HandleFunc("/api/customers", a.getCustomers).Methods("GET")
 }
 
 func (a *App) getSubscriptions(w http.ResponseWriter, r *http.Request) {
@@ -83,6 +85,15 @@ func (a *App) createSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJSON(w, http.StatusCreated, s)
+}
+
+func (a *App) getCustomers(w http.ResponseWriter, r *http.Request) {
+	customers, err := GetCustomers(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusOK, customers)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

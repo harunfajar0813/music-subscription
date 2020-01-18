@@ -55,3 +55,37 @@ func (s *Subscription) CreateSubscription(db *sql.DB) error {
 	}
 	return nil
 }
+
+type Customer struct {
+	CustomerID int    `json:"customer_id"`
+	Name       string `json:"name"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+	Balance    int    `json:"balance"`
+}
+
+func GetCustomers(db *sql.DB) ([]Customer, error) {
+	statement := fmt.Sprintf("SELECT * FROM customer")
+	rows, err := db.Query(statement)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var customers []Customer
+
+	for rows.Next() {
+		var c Customer
+		if err := rows.Scan(&c.CustomerID, &c.Name, &c.Email, &c.Phone, &c.Balance); err != nil {
+			return nil, err
+		}
+		customers = append(customers, c)
+	}
+	if customers == nil {
+		return []Customer{}, nil
+	} else {
+		return customers, nil
+	}
+}
