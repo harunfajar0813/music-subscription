@@ -29,11 +29,13 @@ func TestMain(m *testing.M) {
 
 	ensureSubscriptionTableExists()
 	ensureCustomerTableExists()
+	ensureTransactionTableExists()
 
 	code := m.Run()
 
 	clearSubscriptionTable()
 	clearCustomerTable()
+	clearTransactionTable()
 
 	os.Exit(code)
 }
@@ -177,16 +179,6 @@ func TestGetCustomer(t *testing.T) {
 	checkResponseCode(t, http.StatusOK, response.Code)
 }
 
-func addCustomer(count int) {
-	if count < 1 {
-		count = 1
-	}
-	for i := 0; i < count; i++ {
-		statement := fmt.Sprintf("INSERT INTO customer(name, email, phone, balance) VALUES('%s', '%s', '%s', %d)", generateFake.FirstName(), generateFake.Email(), generateFake.Phonenumber(), 0)
-		a.DB.Exec(statement)
-	}
-}
-
 func TestRegisterCustomer(t *testing.T) {
 	clearCustomerTable()
 
@@ -214,6 +206,51 @@ func TestRegisterCustomer(t *testing.T) {
 
 	if m["customer_id"] != 1.0 {
 		t.Errorf("Expected customer's ID to be '1'. Got '%v'", m["id"])
+	}
+}
+
+func addCustomer(count int) {
+	if count < 1 {
+		count = 1
+	}
+	for i := 0; i < count; i++ {
+		statement := fmt.Sprintf("INSERT INTO customer(name, email, phone, balance) VALUES('%s', '%s', '%s', %d)", generateFake.FirstName(), generateFake.Email(), generateFake.Phonenumber(), 0)
+		a.DB.Exec(statement)
+	}
+}
+
+const createTransactionTable = `
+CREATE TABLE IF NOT EXISTS transaction
+(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    subscription_id INT NOT NULL,
+	total INT NOT NULL,
+	FOREIGN KEY (customer_id) REFERENCES customer(id), 
+	FOREIGN KEY (subscription_id) REFERENCES subscription(id) 
+)`
+
+func ensureTransactionTableExists() {
+	if _, err := a.DB.Exec(createTransactionTable); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func clearTransactionTable() {
+	a.DB.Exec("DELETE FROM transaction")
+	a.DB.Exec("ALTER TABLE transaction AUTO_INCREMENT = 1")
+}
+
+func TestEmptyTransactionTable(t *testing.T) {
+	clearTransactionTable()
+
+	req, _ := http.NewRequest("GET", "/api/transactions", nil)
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	if body := response.Body.String(); body != "[]" {
+		t.Errorf("Expected an empty array. Got %s", body)
 	}
 }
 
