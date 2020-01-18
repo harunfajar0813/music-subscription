@@ -13,7 +13,7 @@ import (
 )
 
 const createSubscriptionTable = `
-CREATE TABLE IF NOT EXISTS subscriptions
+CREATE TABLE IF NOT EXISTS subscription
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -43,8 +43,8 @@ func ensureSubscriptionTableExists() {
 }
 
 func clearSubscriptionTable() {
-	a.DB.Exec("DELETE FROM subscriptions")
-	a.DB.Exec("ALTER TABLE subscriptions AUTO_INCREMENT = 1")
+	a.DB.Exec("DELETE FROM subscription")
+	a.DB.Exec("ALTER TABLE subscription AUTO_INCREMENT = 1")
 }
 
 func TestEmptySubscriptionTable(t *testing.T) {
@@ -115,7 +115,7 @@ func addSubscription(count int) {
 		count = 1
 	}
 	for i := 0; i < count; i++ {
-		statement := fmt.Sprintf("INSERT INTO subscriptions(name, price, duration) VALUES('%s', %d, %d)", generateFake.FirstName(), (i+1)*10, (i+1)*10)
+		statement := fmt.Sprintf("INSERT INTO subscription(name, price, duration) VALUES('%s', %d, %d)", generateFake.FirstName(), (i+1)*10, (i+1)*10)
 		a.DB.Exec(statement)
 	}
 }

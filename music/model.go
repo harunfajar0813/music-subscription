@@ -13,7 +13,7 @@ type Subscription struct {
 }
 
 func GetSubscriptions(db *sql.DB) ([]Subscription, error) {
-	statement := fmt.Sprintf("SELECT * FROM subscriptions")
+	statement := fmt.Sprintf("SELECT * FROM subscription")
 	rows, err := db.Query(statement)
 
 	if err != nil {
@@ -39,12 +39,12 @@ func GetSubscriptions(db *sql.DB) ([]Subscription, error) {
 }
 
 func (s *Subscription) GetSubscriptionByID(db *sql.DB) error {
-	statement := fmt.Sprintf("SELECT * FROM subscriptions WHERE id=%d", s.SubscriptionID)
+	statement := fmt.Sprintf("SELECT * FROM subscription WHERE id=%d", s.SubscriptionID)
 	return db.QueryRow(statement).Scan(&s.SubscriptionID, &s.Name, &s.Price, &s.Duration)
 }
 
 func (s *Subscription) CreateSubscription(db *sql.DB) error {
-	statement := fmt.Sprintf("INSERT INTO subscriptions(name, price, duration) VALUES('%s', %d, %d)", s.Name, s.Price, s.Duration)
+	statement := fmt.Sprintf("INSERT INTO subscription(name, price, duration) VALUES('%s', %d, %d)", s.Name, s.Price, s.Duration)
 	_, err := db.Exec(statement)
 	if err != nil {
 		return err
