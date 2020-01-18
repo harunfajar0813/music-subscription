@@ -101,10 +101,10 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
     * [ ] Register
     * [ ] Topup
     * [ ] Debit
-  * [ ] Subscription
-    * [ ] Create Subscription
-    * [ ] Read Subscription
-    * [ ] Read Subscription By Id
+  * [x] Subscription
+    * [x] Create Subscription
+    * [x] Read Subscription
+    * [x] Read Subscription By Id
   * [ ] Transaction
     * [ ] Create Transaction
     * [ ] Read Transaction 
