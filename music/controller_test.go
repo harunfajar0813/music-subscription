@@ -3,6 +3,8 @@ package music
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	generateFake "github.com/bxcodec/faker"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -97,6 +99,24 @@ func TestCreateSubscription(t *testing.T) {
 
 	if m["subscription_id"] != 1.0 {
 		t.Errorf("Expected subscription ID to be '1'. Got '%v'", m["id"])
+	}
+}
+
+func TestGetSubscription(t *testing.T) {
+	clearSubscriptionTable()
+	addSubscription(1)
+	req, _ := http.NewRequest("GET", "/api/subscription/1", nil)
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+}
+
+func addSubscription(count int) {
+	if count < 1 {
+		count = 1
+	}
+	for i := 0; i < count; i++ {
+		statement := fmt.Sprintf("INSERT INTO subscriptions(name, price, duration) VALUES('%s', %d, %d)", generateFake.FirstName(), (i+1)*10, (i+1)*10)
+		a.DB.Exec(statement)
 	}
 }
 
