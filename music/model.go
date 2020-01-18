@@ -107,3 +107,54 @@ func (c *Customer) RegisterCustomer(db *sql.DB) error {
 	}
 	return nil
 }
+
+type Transaction struct {
+	TransactionID  int `json:"transaction_id"`
+	CustomerID     int `json:"customer_id"`
+	SubscriptionID int `json:"subscription_id"`
+	Total          int `json:"total"`
+}
+
+func GetTransactions(db *sql.DB) ([]Transaction, error) {
+	statement := fmt.Sprintf("SELECT * FROM transaction")
+	rows, err := db.Query(statement)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var transactions []Transaction
+
+	for rows.Next() {
+		var t Transaction
+		if err := rows.Scan(&t.TransactionID, &t.CustomerID, &t.SubscriptionID, &t.Total); err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, t)
+	}
+	if transactions == nil {
+		return []Transaction{}, nil
+	} else {
+		return transactions, nil
+	}
+}
+
+func (t *Transaction) GetTransactionByID(db *sql.DB) error {
+	statement := fmt.Sprintf("SELECT * FROM transaction WHERE id=%d", t.TransactionID)
+	return db.QueryRow(statement).Scan(&t.TransactionID, &t.CustomerID, &t.SubscriptionID, &t.Total)
+}
+
+func (t *Transaction) CreateTransaction(db *sql.DB) error {
+	statement := fmt.Sprintf("INSERT INTO transaction(customer_id, subscription_id, total) VALUES(%d, %d, %d)", t.CustomerID, t.SubscriptionID, t.Total)
+	_, err := db.Exec(statement)
+	if err != nil {
+		return err
+	}
+	err = db.QueryRow("SELECT LAST_INSERT_ID()").Scan(&t.TransactionID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

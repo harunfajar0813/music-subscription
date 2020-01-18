@@ -222,12 +222,12 @@ func addCustomer(count int) {
 const createTransactionTable = `
 CREATE TABLE IF NOT EXISTS transaction
 (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    subscription_id INT NOT NULL,
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   customer_id INT NOT NULL,
+   subscription_id INT NOT NULL,
 	total INT NOT NULL,
-	FOREIGN KEY (customer_id) REFERENCES customer(id), 
-	FOREIGN KEY (subscription_id) REFERENCES subscription(id) 
+	FOREIGN KEY (customer_id) REFERENCES customer(id),
+	FOREIGN KEY (subscription_id) REFERENCES subscription(id)
 )`
 
 func ensureTransactionTableExists() {
@@ -239,6 +239,12 @@ func ensureTransactionTableExists() {
 func clearTransactionTable() {
 	a.DB.Exec("DELETE FROM transaction")
 	a.DB.Exec("ALTER TABLE transaction AUTO_INCREMENT = 1")
+
+	a.DB.Exec("DELETE FROM customer")
+	a.DB.Exec("ALTER TABLE customer AUTO_INCREMENT = 1")
+
+	a.DB.Exec("DELETE FROM subscription")
+	a.DB.Exec("ALTER TABLE subscription AUTO_INCREMENT = 1")
 }
 
 func TestEmptyTransactionTable(t *testing.T) {
@@ -272,9 +278,7 @@ func TestCreateTransaction(t *testing.T) {
 
 	payload := []byte(`{"customer_id":1,"subscription_id":1,"total":10}`)
 
-	clearCustomerTable()
 	addCustomer(1)
-	clearSubscriptionTable()
 	addSubscription(1)
 	req, _ := http.NewRequest("POST", "/api/transaction/payment", bytes.NewBuffer(payload))
 	response := executeRequest(req)
@@ -299,28 +303,25 @@ func TestCreateTransaction(t *testing.T) {
 	if m["transaction_id"] != 1.0 {
 		t.Errorf("Expected transaction's ID to be '1'. Got '%v'", m["id"])
 	}
-	clearCustomerTable()
-	clearTransactionTable()
 }
 
 func TestGetTransaction(t *testing.T) {
 	clearTransactionTable()
+
+	addCustomer(1)
+	addSubscription(1)
 	addTransaction(1)
+
 	req, _ := http.NewRequest("GET", "/api/transaction/1", nil)
 	response := executeRequest(req)
+
 	checkResponseCode(t, http.StatusOK, response.Code)
-	clearCustomerTable()
-	clearSubscriptionTable()
 }
 
 func addTransaction(count int) {
 	if count < 1 {
 		count = 1
 	}
-	clearCustomerTable()
-	addCustomer(count)
-	clearSubscriptionTable()
-	addSubscription(count)
 	for i := 1; i <= count; i++ {
 		statement := fmt.Sprintf("INSERT INTO transaction(customer_id, subscription_id, total) VALUES(%d, %d, %d)", i, i, (i+1)*10)
 		a.DB.Exec(statement)
