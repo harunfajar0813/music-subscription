@@ -40,7 +40,8 @@ func GetSubscriptions(db *sql.DB) ([]Subscription, error) {
 }
 
 func (s *Subscription) GetSubscriptionByID(db *sql.DB) error {
-	return errors.New("not implemented")
+	statement := fmt.Sprintf("SELECT * FROM subscriptions WHERE id=%d", s.SubscriptionID)
+	return db.QueryRow(statement).Scan(&s.SubscriptionID, &s.Name, &s.Price, &s.Duration)
 }
 
 func (s *Subscription) CreateSubscription(db *sql.DB) error {

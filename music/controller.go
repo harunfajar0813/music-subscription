@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -35,6 +36,7 @@ func (a *App) Run(address string) {
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/subscriptions", a.getSubscriptions).Methods("GET")
+	a.Router.HandleFunc("/api/subscription/{id:[0-9]+}", a.getSubscriptionByID).Methods("GET")
 }
 
 func (a *App) getSubscriptions(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +46,27 @@ func (a *App) getSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJSON(w, http.StatusOK, subscriptions)
+}
+
+func (a *App) getSubscriptionByID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid subscription ID")
+		return
+	}
+
+	s := Subscription{SubscriptionID: id}
+	if err := s.GetSubscriptionByID(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "Subscription not found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+	respondWithJSON(w, http.StatusOK, s)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
