@@ -96,19 +96,19 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
 
 ## <b>TODO</b>
 * [x] Setup your Environment of this project by your chosen language
-* [ ] Prepare the actors services (Controller, Model, Route)
+* [x] Prepare the actors services (Controller, Model, Route)
   * [ ] Customer
-    * [ ] Register
+    * [x] Register
     * [ ] Topup
     * [ ] Debit
   * [x] Subscription
     * [x] Create Subscription
     * [x] Read Subscription
     * [x] Read Subscription By Id
-  * [ ] Transaction
-    * [ ] Create Transaction
-    * [ ] Read Transaction 
-    * [ ] Read Transaction By ID
+  * [x] Transaction
+    * [x] Create Transaction
+    * [x] Read Transaction 
+    * [x] Read Transaction By ID
 * [ ] Do Testing
 
 ## <b>TASK</b>
