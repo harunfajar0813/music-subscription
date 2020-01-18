@@ -88,7 +88,7 @@ func TestCreateSubscription(t *testing.T) {
 	}
 
 	if m["price"] != 30.0 {
-		t.Errorf("Expected subscription's age to be '30'. Got '%v'", m["price"])
+		t.Errorf("Expected subscription's price to be '30'. Got '%v'", m["price"])
 	}
 
 	if m["duration"] != 10.0 {
