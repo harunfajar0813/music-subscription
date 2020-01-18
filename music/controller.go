@@ -41,6 +41,7 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/api/customers", a.getCustomers).Methods("GET")
 	a.Router.HandleFunc("/api/customer/{id:[0-9]+}", a.getCustomerByID).Methods("GET")
+	a.Router.HandleFunc("/api/customer/register", a.registerCustomer).Methods("POST")
 }
 
 func (a *App) getSubscriptions(w http.ResponseWriter, r *http.Request) {
@@ -116,6 +117,21 @@ func (a *App) getCustomerByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJSON(w, http.StatusOK, c)
+}
+
+func (a *App) registerCustomer(w http.ResponseWriter, r *http.Request) {
+	var c Customer
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&c); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+	if err := c.RegisterCustomer(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusCreated, c)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

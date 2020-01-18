@@ -94,3 +94,16 @@ func (c *Customer) GetCustomerByID(db *sql.DB) error {
 	statement := fmt.Sprintf("SELECT * FROM customer WHERE id=%d", c.CustomerID)
 	return db.QueryRow(statement).Scan(&c.CustomerID, &c.Name, &c.Email, &c.Phone, &c.Balance)
 }
+
+func (c *Customer) RegisterCustomer(db *sql.DB) error {
+	statement := fmt.Sprintf("INSERT INTO customer(name, email, phone, balance) VALUES('%s', '%s', '%s', %d)", c.Name, c.Email, c.Phone, 0)
+	_, err := db.Exec(statement)
+	if err != nil {
+		return err
+	}
+	err = db.QueryRow("SELECT LAST_INSERT_ID()").Scan(&c.CustomerID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
