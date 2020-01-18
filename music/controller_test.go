@@ -171,14 +171,6 @@ func TestGetNonExistentCustomer(t *testing.T) {
 	}
 }
 
-func TestGetCustomer(t *testing.T) {
-	clearCustomerTable()
-	addCustomer(1)
-	req, _ := http.NewRequest("GET", "/api/customer/1", nil)
-	response := executeRequest(req)
-	checkResponseCode(t, http.StatusOK, response.Code)
-}
-
 func TestRegisterCustomer(t *testing.T) {
 	clearCustomerTable()
 
@@ -207,6 +199,14 @@ func TestRegisterCustomer(t *testing.T) {
 	if m["customer_id"] != 1.0 {
 		t.Errorf("Expected customer's ID to be '1'. Got '%v'", m["id"])
 	}
+}
+
+func TestGetCustomer(t *testing.T) {
+	clearCustomerTable()
+	addCustomer(1)
+	req, _ := http.NewRequest("GET", "/api/customer/1", nil)
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
 }
 
 func addCustomer(count int) {
@@ -264,6 +264,66 @@ func TestGetNonExistentTransaction(t *testing.T) {
 	json.Unmarshal(response.Body.Bytes(), &m)
 	if m["error"] != "Transaction not found" {
 		t.Errorf("Expected the 'error' key of the response to be set to 'Transaction not found'. Got '%s'", m["error"])
+	}
+}
+
+func TestCreateTransaction(t *testing.T) {
+	clearTransactionTable()
+
+	payload := []byte(`{"customer_id":1,"subscription_id":1,"total":10}`)
+
+	clearCustomerTable()
+	addCustomer(1)
+	clearSubscriptionTable()
+	addSubscription(1)
+	req, _ := http.NewRequest("POST", "/api/transaction/payment", bytes.NewBuffer(payload))
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusCreated, response.Code)
+
+	var m map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["customer_id"] != 1.0 {
+		t.Errorf("Expected transaction's customer_id to be '1'. Got '%v'", m["name"])
+	}
+
+	if m["subscription_id"] != 1.0 {
+		t.Errorf("Expected transaction's subscription_id to be '1'. Got '%v'", m["price"])
+	}
+
+	if m["total"] != 10.0 {
+		t.Errorf("Expected transaction's duration to be '10'. Got '%v'", m["duration"])
+	}
+
+	if m["transaction_id"] != 1.0 {
+		t.Errorf("Expected transaction's ID to be '1'. Got '%v'", m["id"])
+	}
+	clearCustomerTable()
+	clearTransactionTable()
+}
+
+func TestGetTransaction(t *testing.T) {
+	clearTransactionTable()
+	addTransaction(1)
+	req, _ := http.NewRequest("GET", "/api/transaction/1", nil)
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+	clearCustomerTable()
+	clearSubscriptionTable()
+}
+
+func addTransaction(count int) {
+	if count < 1 {
+		count = 1
+	}
+	clearCustomerTable()
+	addCustomer(count)
+	clearSubscriptionTable()
+	addSubscription(count)
+	for i := 1; i <= count; i++ {
+		statement := fmt.Sprintf("INSERT INTO transaction(customer_id, subscription_id, total) VALUES(%d, %d, %d)", i, i, (i+1)*10)
+		a.DB.Exec(statement)
 	}
 }
 
