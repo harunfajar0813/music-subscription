@@ -254,6 +254,19 @@ func TestEmptyTransactionTable(t *testing.T) {
 	}
 }
 
+func TestGetNonExistentTransaction(t *testing.T) {
+	clearTransactionTable()
+
+	req, _ := http.NewRequest("GET", "/api/transaction/45", nil)
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusNotFound, response.Code)
+	var m map[string]string
+	json.Unmarshal(response.Body.Bytes(), &m)
+	if m["error"] != "Transaction not found" {
+		t.Errorf("Expected the 'error' key of the response to be set to 'Transaction not found'. Got '%s'", m["error"])
+	}
+}
+
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
