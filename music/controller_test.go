@@ -43,6 +43,19 @@ func clearSubscriptionTable() {
 	a.DB.Exec("ALTER TABLE subscriptions AUTO_INCREMENT = 1")
 }
 
+func TestEmptySubscriptionTable(t *testing.T) {
+	clearSubscriptionTable()
+
+	req, _ := http.NewRequest("GET", "/api/subscriptions", nil)
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	if body := response.Body.String(); body != "[]" {
+		t.Errorf("Expected an empty array. Got %s", body)
+	}
+}
+
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
