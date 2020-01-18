@@ -40,6 +40,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/subscription", a.createSubscription).Methods("POST")
 
 	a.Router.HandleFunc("/api/customers", a.getCustomers).Methods("GET")
+	a.Router.HandleFunc("/api/customer/{id:[0-9]+}", a.getCustomerByID).Methods("GET")
 }
 
 func (a *App) getSubscriptions(w http.ResponseWriter, r *http.Request) {
@@ -94,6 +95,27 @@ func (a *App) getCustomers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJSON(w, http.StatusOK, customers)
+}
+
+func (a *App) getCustomerByID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid customer ID")
+		return
+	}
+
+	c := Customer{CustomerID: id}
+	if err := c.GetCustomerByID(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "Customer not found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+	respondWithJSON(w, http.StatusOK, c)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

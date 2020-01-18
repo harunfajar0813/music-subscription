@@ -89,3 +89,8 @@ func GetCustomers(db *sql.DB) ([]Customer, error) {
 		return customers, nil
 	}
 }
+
+func (c *Customer) GetCustomerByID(db *sql.DB) error {
+	statement := fmt.Sprintf("SELECT * FROM customer WHERE id=%d", c.CustomerID)
+	return db.QueryRow(statement).Scan(&c.CustomerID, &c.Name, &c.Email, &c.Phone, &c.Balance)
+}
