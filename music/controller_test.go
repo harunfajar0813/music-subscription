@@ -156,6 +156,19 @@ func TestEmptyCustomerTable(t *testing.T) {
 	}
 }
 
+func TestGetNonExistentCustomer(t *testing.T) {
+	clearCustomerTable()
+
+	req, _ := http.NewRequest("GET", "/api/customer/45", nil)
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusNotFound, response.Code)
+	var m map[string]string
+	json.Unmarshal(response.Body.Bytes(), &m)
+	if m["error"] != "Customer not found" {
+		t.Errorf("Expected the 'error' key of the response to be set to 'Customer not found'. Got '%s'", m["error"])
+	}
+}
+
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
