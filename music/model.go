@@ -2,7 +2,6 @@ package music
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 )
 
@@ -45,5 +44,14 @@ func (s *Subscription) GetSubscriptionByID(db *sql.DB) error {
 }
 
 func (s *Subscription) CreateSubscription(db *sql.DB) error {
-	return errors.New("not implemented")
+	statement := fmt.Sprintf("INSERT INTO subscriptions(name, price, duration) VALUES('%s', %d, %d)", s.Name, s.Price, s.Duration)
+	_, err := db.Exec(statement)
+	if err != nil {
+		return err
+	}
+	err = db.QueryRow("SELECT LAST_INSERT_ID()").Scan(&s.SubscriptionID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

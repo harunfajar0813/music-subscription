@@ -37,6 +37,7 @@ func (a *App) Run(address string) {
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/subscriptions", a.getSubscriptions).Methods("GET")
 	a.Router.HandleFunc("/api/subscription/{id:[0-9]+}", a.getSubscriptionByID).Methods("GET")
+	a.Router.HandleFunc("/api/subscription", a.createSubscription).Methods("POST")
 }
 
 func (a *App) getSubscriptions(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +68,21 @@ func (a *App) getSubscriptionByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJSON(w, http.StatusOK, s)
+}
+
+func (a *App) createSubscription(w http.ResponseWriter, r *http.Request) {
+	var s Subscription
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&s); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+	if err := s.CreateSubscription(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusCreated, s)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
