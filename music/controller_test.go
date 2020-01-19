@@ -243,6 +243,16 @@ func addCustomer(count int) {
 	}
 }
 
+func addCustomerWithBalance(count int) {
+	if count < 1 {
+		count = 1
+	}
+	for i := 0; i < count; i++ {
+		statement := fmt.Sprintf("INSERT INTO customer(name, email, phone, balance) VALUES('%s', '%s', '%s', %d)", generateFake.FirstName(), generateFake.Email(), generateFake.Phonenumber(), 100)
+		a.DB.Exec(statement)
+	}
+}
+
 const createTransactionTable = `
 CREATE TABLE IF NOT EXISTS transaction
 (
@@ -300,10 +310,10 @@ func TestGetNonExistentTransaction(t *testing.T) {
 func TestCreateTransaction(t *testing.T) {
 	clearTransactionTable()
 
-	payload := []byte(`{"customer_id":1,"subscription_id":1,"total":10}`)
-
-	addCustomer(1)
+	addCustomerWithBalance(1)
 	addSubscription(1)
+
+	payload := []byte(`{"customer_id":1,"subscription_id":1,"total":10}`)
 	req, _ := http.NewRequest("POST", "/api/transaction/payment", bytes.NewBuffer(payload))
 	response := executeRequest(req)
 

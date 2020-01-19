@@ -2,6 +2,7 @@ package music
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -179,9 +180,64 @@ func (t *Transaction) CreateTransaction(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
+
 	err = db.QueryRow("SELECT LAST_INSERT_ID()").Scan(&t.TransactionID)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (t *Transaction) GetBalanceCustomerByID(db *sql.DB) (int, error) {
+	statement := fmt.Sprintf("SELECT balance FROM customer WHERE id=%d", t.CustomerID)
+	row, err := db.Query(statement)
+
+	if err != nil {
+		return 0 - 1, err
+	}
+
+	defer row.Close()
+
+	var oldBalance int
+
+	for row.Next() {
+		if err2 := row.Scan(&oldBalance); err2 != nil {
+			return oldBalance, nil
+		}
+	}
+	return oldBalance, errors.New("got value successfully")
+}
+
+func (t *Transaction) GetPriceSubscriptionByID(db *sql.DB) (int, error) {
+	statement := fmt.Sprintf("SELECT price FROM subscription WHERE id=%d", t.SubscriptionID)
+	row, err := db.Query(statement)
+
+	if err != nil {
+		return 0 - 1, err
+	}
+
+	defer row.Close()
+
+	var price int
+
+	for row.Next() {
+		if err2 := row.Scan(&price); err2 != nil {
+			return price, nil
+		}
+	}
+	return price, errors.New("got value successfully")
+}
+
+func (t *Transaction) DecreasedCustomerBalance(db *sql.DB, oldBalance int, subsPrice int) error {
+	if oldBalance-subsPrice < 0 {
+		return errors.New("balance wasn't enough")
+	} else {
+		statement := fmt.Sprintf("UPDATE customer SET balance = %d WHERE id = %d", oldBalance-subsPrice, t.CustomerID)
+		_, err := db.Exec(statement)
+
+		if err != nil {
+			return err
+		}
+		return nil
+	}
 }

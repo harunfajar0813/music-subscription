@@ -192,11 +192,19 @@ func (a *App) createTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	if err := t.CreateTransaction(a.DB); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
+
+	oldBalance, _ := t.GetBalanceCustomerByID(a.DB)
+	subsPrice, _ := t.GetPriceSubscriptionByID(a.DB)
+	errDecreased := t.DecreasedCustomerBalance(a.DB, oldBalance, subsPrice)
+	if errDecreased != nil {
+		respondWithError(w, http.StatusInternalServerError, errDecreased.Error())
+	} else {
+		if err := t.CreateTransaction(a.DB); err != nil {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		respondWithJSON(w, http.StatusCreated, t)
 	}
-	respondWithJSON(w, http.StatusCreated, t)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
