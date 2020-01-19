@@ -42,6 +42,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/customers", a.getCustomers).Methods("GET")
 	a.Router.HandleFunc("/api/customer/{id:[0-9]+}", a.getCustomerByID).Methods("GET")
 	a.Router.HandleFunc("/api/customer/register", a.registerCustomer).Methods("POST")
+	a.Router.HandleFunc("/api/customer/topup", a.topUpBalanceCustomer).Methods("PUT")
 
 	a.Router.HandleFunc("/api/transactions", a.getTransactions).Methods("GET")
 	a.Router.HandleFunc("/api/transaction/{id:[0-9]+}", a.getTransactionByID).Methods("GET")

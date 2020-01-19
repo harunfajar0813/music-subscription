@@ -201,6 +201,30 @@ func TestRegisterCustomer(t *testing.T) {
 	}
 }
 
+func TestTopUpBalanceCustomer(t *testing.T) {
+	clearCustomerTable()
+
+	payload := []byte(`{"customer_id":1,"amount":10}`)
+
+	addCustomer(1)
+
+	req, _ := http.NewRequest("PUT", "/api/customer/topup", bytes.NewBuffer(payload))
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusCreated, response.Code)
+
+	var m map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["customer_id"] != 1.0 {
+		t.Errorf("Expected customer's ID to be '1'. Got '%v'", m["customer_id"])
+	}
+
+	if m["amount"] != 10.0 {
+		t.Errorf("Expected customer's amount to be '10'. Got '%v'", m["amount"])
+	}
+}
+
 func TestGetCustomer(t *testing.T) {
 	clearCustomerTable()
 	addCustomer(1)

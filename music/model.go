@@ -64,6 +64,11 @@ type Customer struct {
 	Balance    int    `json:"balance"`
 }
 
+type TopUpBalanceCustomer struct {
+	CustomerID int `json:"customer_id"`
+	Amount     int `json:"amount"`
+}
+
 func GetCustomers(db *sql.DB) ([]Customer, error) {
 	statement := fmt.Sprintf("SELECT * FROM customer")
 	rows, err := db.Query(statement)
