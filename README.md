@@ -99,7 +99,7 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
 * [x] Prepare the actors services (Controller, Model, Route)
   * [ ] Customer
     * [x] Register
-    * [ ] Topup
+    * [x] Topup
     * [ ] Debit
   * [x] Subscription
     * [x] Create Subscription
