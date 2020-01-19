@@ -113,6 +113,28 @@ func (c *Customer) RegisterCustomer(db *sql.DB) error {
 	return nil
 }
 
+func (topUpBalanceCustomer *TopUpBalanceCustomer) TopUpBalanceCustomer(db *sql.DB) error {
+	statement1 := fmt.Sprintf("SELECT balance FROM customer WHERE id = %d", topUpBalanceCustomer.CustomerID)
+	row, err1 := db.Query(statement1)
+
+	if err1 != nil {
+		return err1
+	}
+
+	defer row.Close()
+
+	var oldBalanceCustomer int
+	for row.Next() {
+		if err2 := row.Scan(&oldBalanceCustomer); err2 != nil {
+			return err2
+		}
+	}
+
+	statement2 := fmt.Sprintf("UPDATE customer SET balance = %d WHERE id = %d", oldBalanceCustomer+topUpBalanceCustomer.Amount, topUpBalanceCustomer.CustomerID)
+	_, err3 := db.Exec(statement2)
+	return err3
+}
+
 type Transaction struct {
 	TransactionID  int `json:"transaction_id"`
 	CustomerID     int `json:"customer_id"`

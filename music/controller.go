@@ -138,6 +138,21 @@ func (a *App) registerCustomer(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, c)
 }
 
+func (a *App) topUpBalanceCustomer(w http.ResponseWriter, r *http.Request) {
+	var topUpBalance TopUpBalanceCustomer
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&topUpBalance); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+	if err := topUpBalance.TopUpBalanceCustomer(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusCreated, topUpBalance)
+}
+
 func (a *App) getTransactions(w http.ResponseWriter, r *http.Request) {
 	transactions, err := GetTransactions(a.DB)
 	if err != nil {
