@@ -328,7 +328,7 @@ func TestRenewTransaction(t *testing.T) {
 	json.Unmarshal(response.Body.Bytes(), &m)
 
 	if m["transaction_id"] != 2.0 {
-		t.Errorf("Expected transaction's ID to be '1'. Got '%v'", m["transaction_id"])
+		t.Errorf("Expected transaction's ID to be '2'. Got '%v'", m["transaction_id"])
 	}
 }
 
