@@ -188,8 +188,8 @@ func (t *Transaction) CreateTransaction(db *sql.DB) error {
 	return nil
 }
 
-func (t *Transaction) GetBalanceCustomerByID(db *sql.DB) (int, error) {
-	statement := fmt.Sprintf("SELECT balance FROM customer WHERE id=%d", t.CustomerID)
+func GetBalanceCustomerByID(db *sql.DB, customerID int) (int, error) {
+	statement := fmt.Sprintf("SELECT balance FROM customer WHERE id=%d", customerID)
 	row, err := db.Query(statement)
 
 	if err != nil {
@@ -208,8 +208,8 @@ func (t *Transaction) GetBalanceCustomerByID(db *sql.DB) (int, error) {
 	return oldBalance, errors.New("got value successfully")
 }
 
-func (t *Transaction) GetPriceSubscriptionByID(db *sql.DB) (int, error) {
-	statement := fmt.Sprintf("SELECT price FROM subscription WHERE id=%d", t.SubscriptionID)
+func GetPriceSubscriptionByID(db *sql.DB, subscriptionID int) (int, error) {
+	statement := fmt.Sprintf("SELECT price FROM subscription WHERE id=%d", subscriptionID)
 	row, err := db.Query(statement)
 
 	if err != nil {

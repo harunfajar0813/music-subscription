@@ -339,6 +339,27 @@ func TestCreateTransaction(t *testing.T) {
 	}
 }
 
+func TestRenewTransaction(t *testing.T) {
+	clearTransactionTable()
+
+	addCustomerWithBalance(1)
+	addSubscription(1)
+	addTransaction(1)
+
+	payload := []byte(`{"transaction_id":1}`)
+	req, _ := http.NewRequest("POST", "/api/transaction/renew", bytes.NewBuffer(payload))
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusCreated, response.Code)
+
+	var m map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["transaction_id"] != 2.0 {
+		t.Errorf("Expected transaction's ID to be '1'. Got '%v'", m["transaction_id"])
+	}
+}
+
 func TestGetTransaction(t *testing.T) {
 	clearTransactionTable()
 
