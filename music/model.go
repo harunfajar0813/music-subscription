@@ -65,6 +65,10 @@ type Customer struct {
 	Balance    int    `json:"balance"`
 }
 
+type CustomerResponse struct {
+	CustomerID int `json:"customer_id"`
+}
+
 type TopUpBalanceCustomer struct {
 	CustomerID int `json:"customer_id"`
 	Amount     int `json:"amount"`
@@ -144,6 +148,10 @@ type Transaction struct {
 }
 
 type RenewTransaction struct {
+	TransactionID int `json:"transaction_id"`
+}
+
+type TransactionResponse struct {
 	TransactionID int `json:"transaction_id"`
 }
 

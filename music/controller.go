@@ -137,7 +137,9 @@ func (a *App) registerCustomer(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusCreated, c)
+	var cResponse CustomerResponse
+	cResponse.CustomerID = c.CustomerID
+	respondWithJSON(w, http.StatusCreated, cResponse)
 }
 
 func (a *App) topUpBalanceCustomer(w http.ResponseWriter, r *http.Request) {
@@ -152,7 +154,7 @@ func (a *App) topUpBalanceCustomer(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(w, http.StatusCreated, topUpBalance)
+	respondWithMessage(w, http.StatusCreated, "Top Up Balance succeed")
 }
 
 func (a *App) getTransactions(w http.ResponseWriter, r *http.Request) {
@@ -204,7 +206,9 @@ func (a *App) createTransaction(w http.ResponseWriter, r *http.Request) {
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		respondWithJSON(w, http.StatusCreated, t)
+		var tResponse TransactionResponse
+		tResponse.TransactionID = t.TransactionID
+		respondWithJSON(w, http.StatusCreated, tResponse)
 	}
 }
 
@@ -238,12 +242,18 @@ func (a *App) renewTransaction(w http.ResponseWriter, r *http.Request) {
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		respondWithJSON(w, http.StatusCreated, t)
+		var tResponse TransactionResponse
+		tResponse.TransactionID = t.TransactionID
+		respondWithJSON(w, http.StatusCreated, tResponse)
 	}
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
+}
+
+func respondWithMessage(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"message": message})
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {

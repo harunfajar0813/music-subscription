@@ -184,18 +184,6 @@ func TestRegisterCustomer(t *testing.T) {
 	var m map[string]interface{}
 	json.Unmarshal(response.Body.Bytes(), &m)
 
-	if m["name"] != "test customer" {
-		t.Errorf("Expected customer's name to be 'test customer'. Got '%v'", m["name"])
-	}
-
-	if m["email"] != "testcustomer@gmail.com" {
-		t.Errorf("Expected customer's email to be 'testcustomer@gmail.com'. Got '%v'", m["price"])
-	}
-
-	if m["phone"] != "0813" {
-		t.Errorf("Expected customer's phone to be '0813'. Got '%v'", m["duration"])
-	}
-
 	if m["customer_id"] != 1.0 {
 		t.Errorf("Expected customer's ID to be '1'. Got '%v'", m["id"])
 	}
@@ -216,12 +204,8 @@ func TestTopUpBalanceCustomer(t *testing.T) {
 	var m map[string]interface{}
 	json.Unmarshal(response.Body.Bytes(), &m)
 
-	if m["customer_id"] != 1.0 {
-		t.Errorf("Expected customer's ID to be '1'. Got '%v'", m["customer_id"])
-	}
-
-	if m["amount"] != 10.0 {
-		t.Errorf("Expected customer's amount to be '10'. Got '%v'", m["amount"])
+	if m["message"] != "Top Up Balance succeed" {
+		t.Errorf("Expected customer's message to be 'Top Up Balance succeed'. Got '%v'", m["message"])
 	}
 }
 
@@ -322,20 +306,8 @@ func TestCreateTransaction(t *testing.T) {
 	var m map[string]interface{}
 	json.Unmarshal(response.Body.Bytes(), &m)
 
-	if m["customer_id"] != 1.0 {
-		t.Errorf("Expected transaction's customer_id to be '1'. Got '%v'", m["name"])
-	}
-
-	if m["subscription_id"] != 1.0 {
-		t.Errorf("Expected transaction's subscription_id to be '1'. Got '%v'", m["price"])
-	}
-
-	if m["total"] != 10.0 {
-		t.Errorf("Expected transaction's duration to be '10'. Got '%v'", m["duration"])
-	}
-
 	if m["transaction_id"] != 1.0 {
-		t.Errorf("Expected transaction's ID to be '1'. Got '%v'", m["id"])
+		t.Errorf("Expected transaction's ID to be '1'. Got '%v'", m["transaction_id"])
 	}
 }
 
