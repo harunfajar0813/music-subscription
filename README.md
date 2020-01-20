@@ -109,6 +109,7 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
     * [x] Create Transaction
     * [x] Read Transaction 
     * [x] Read Transaction By ID
+    * [x] Renew Transaction
 * [ ] Do Testing
 
 ## <b>TASK</b>
