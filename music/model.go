@@ -143,6 +143,10 @@ type Transaction struct {
 	Total          int `json:"total"`
 }
 
+type RenewTransaction struct {
+	TransactionID int `json:"transaction_id"`
+}
+
 func GetTransactions(db *sql.DB) ([]Transaction, error) {
 	statement := fmt.Sprintf("SELECT * FROM transaction")
 	rows, err := db.Query(statement)

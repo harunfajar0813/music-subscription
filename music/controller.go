@@ -47,6 +47,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/transactions", a.getTransactions).Methods("GET")
 	a.Router.HandleFunc("/api/transaction/{id:[0-9]+}", a.getTransactionByID).Methods("GET")
 	a.Router.HandleFunc("/api/transaction/payment", a.createTransaction).Methods("POST")
+	a.Router.HandleFunc("/api/transaction/renew", a.renewTransaction).Methods("POST")
 }
 
 func (a *App) getSubscriptions(w http.ResponseWriter, r *http.Request) {
@@ -192,6 +193,40 @@ func (a *App) createTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
+
+	oldBalance, _ := GetBalanceCustomerByID(a.DB, t.CustomerID)
+	subsPrice, _ := GetPriceSubscriptionByID(a.DB, t.SubscriptionID)
+	errDecreased := t.DecreasedCustomerBalance(a.DB, oldBalance, subsPrice)
+	if errDecreased != nil {
+		respondWithError(w, http.StatusInternalServerError, errDecreased.Error())
+	} else {
+		if err := t.CreateTransaction(a.DB); err != nil {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		respondWithJSON(w, http.StatusCreated, t)
+	}
+}
+
+func (a *App) renewTransaction(w http.ResponseWriter, r *http.Request) {
+	var renewT RenewTransaction
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&renewT); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	t := Transaction{TransactionID: renewT.TransactionID}
+	if err := t.GetTransactionByID(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "Transaction not found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
 
 	oldBalance, _ := GetBalanceCustomerByID(a.DB, t.CustomerID)
 	subsPrice, _ := GetPriceSubscriptionByID(a.DB, t.SubscriptionID)
