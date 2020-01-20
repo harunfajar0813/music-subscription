@@ -232,7 +232,7 @@ func GetPriceSubscriptionByID(db *sql.DB, subscriptionID int) (int, error) {
 	return price, errors.New("got value successfully")
 }
 
-func (t *Transaction) DecreasedCustomerBalance(db *sql.DB, oldBalance int, subsPrice int) error {
+func (t *Transaction) DebitCustomerBalance(db *sql.DB, oldBalance int, subsPrice int) error {
 	if oldBalance-subsPrice < 0 {
 		return errors.New("balance wasn't enough")
 	} else {

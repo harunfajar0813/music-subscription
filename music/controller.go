@@ -196,7 +196,7 @@ func (a *App) createTransaction(w http.ResponseWriter, r *http.Request) {
 
 	oldBalance, _ := GetBalanceCustomerByID(a.DB, t.CustomerID)
 	subsPrice, _ := GetPriceSubscriptionByID(a.DB, t.SubscriptionID)
-	errDecreased := t.DecreasedCustomerBalance(a.DB, oldBalance, subsPrice)
+	errDecreased := t.DebitCustomerBalance(a.DB, oldBalance, subsPrice)
 	if errDecreased != nil {
 		respondWithError(w, http.StatusInternalServerError, errDecreased.Error())
 	} else {
@@ -230,7 +230,7 @@ func (a *App) renewTransaction(w http.ResponseWriter, r *http.Request) {
 
 	oldBalance, _ := GetBalanceCustomerByID(a.DB, t.CustomerID)
 	subsPrice, _ := GetPriceSubscriptionByID(a.DB, t.SubscriptionID)
-	errDecreased := t.DecreasedCustomerBalance(a.DB, oldBalance, subsPrice)
+	errDecreased := t.DebitCustomerBalance(a.DB, oldBalance, subsPrice)
 	if errDecreased != nil {
 		respondWithError(w, http.StatusInternalServerError, errDecreased.Error())
 	} else {

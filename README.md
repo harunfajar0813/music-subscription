@@ -97,10 +97,10 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
 ## <b>TODO</b>
 * [x] Setup your Environment of this project by your chosen language
 * [x] Prepare the actors services (Controller, Model, Route)
-  * [ ] Customer
+  * [x] Customer
     * [x] Register
     * [x] Topup
-    * [ ] Debit
+    * [x] Debit
   * [x] Subscription
     * [x] Create Subscription
     * [x] Read Subscription
@@ -109,7 +109,7 @@ THEN Customer balance should be decreased, Transaction recorded as receipt, and 
     * [x] Create Transaction
     * [x] Read Transaction 
     * [x] Read Transaction By ID
-    * [x] Renew Transaction
+    * [x] Renew Subscription and Return Transaction
 * [ ] Do Testing
 
 ## <b>TASK</b>
